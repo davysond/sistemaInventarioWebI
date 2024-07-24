@@ -191,14 +191,3 @@ Deleta um produto existente.
   "message": "Produto deletado com sucesso."
 }
 ```
-
-## Contribuição
-
-Contribuições são bem-vindas! Por favor, abra uma issue ou envie um pull request.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-```
-
-Espero que isso ajude! Se precisar de mais alguma coisa, estou à disposição.
