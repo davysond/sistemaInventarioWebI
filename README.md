@@ -12,12 +12,12 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
 
 1. Clone o repositório:
    ```sh
-   git clone https://github.com/seu-usuario/inventario-interativo.git
+   git clone https://github.com/davysond/sistemaInventarioWebI.git
    ```
 
 2. Navegue até o diretório do projeto:
    ```sh
-   cd inventario-interativo
+   cd sistemaInventarioWebI
    ```
 
 3. Instale as dependências:
