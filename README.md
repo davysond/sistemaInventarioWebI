@@ -3,7 +3,6 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
 
 Claro! Aqui está um exemplo de um arquivo README.md para um projeto de Inventário Interativo:
 
-```markdown
 # Inventário Interativo
 
 ## Tecnologias Utilizadas
