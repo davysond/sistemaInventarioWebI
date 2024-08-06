@@ -40,6 +40,26 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
 
 ### Para Administradores
 
+#### `POST /users/createUser`
+
+Cria um novo usuário no sistema a partir das propriedades informadas.
+
+**Exemplo de resposta:**
+```json
+[
+  {
+    "id": "1",
+    "name": "João",
+    "email": "joao@example.com"
+  },
+  {
+    "id": "2",
+    "name": "Maria",
+    "email": "maria@example.com"
+  }
+]
+```
+
 #### `GET /users`
 
 Retorna uma lista de todos os usuários.
@@ -60,7 +80,7 @@ Retorna uma lista de todos os usuários.
 ]
 ```
 
-#### `GET /usersById/:id`
+#### `GET /users/:id`
 
 Retorna os detalhes de um usuário específico com base no ID.
 
@@ -119,7 +139,7 @@ Retorna uma lista de produtos de um usuário específico com base no ID do usuá
 
 ### Para Usuários
 
-#### `POST /products`
+#### `POST /products/createProduct`
 
 Adiciona um novo produto.
 
@@ -127,24 +147,46 @@ Adiciona um novo produto.
 - `name` (obrigatório): Nome do produto.
 - `description` (opcional): Descrição do produto.
 - `price` (obrigatório): Preço do produto.
+- `userId` (opcional): ID do usuário propretário do produto.
 
 **Exemplo de corpo da requisição:**
 ```json
-{
-  "name": "Produto Novo",
-  "description": "Descrição do produto novo",
-  "price": 30.0
-}
+[
+  {
+    "id": "1",
+    "name": "Smartphone",
+    "description":  "My Smartphone",
+    "price": 1000,
+    "userId": 1
+  },
+  {
+    "id": "2",
+    "name": "Secondary Smartphone",
+    "description":  "My secondary smartphone",
+    "price": 900,
+    "userId": 1
+  }
+]
 ```
 
 **Exemplo de resposta:**
 ```json
-{
-  "id": "3",
-  "name": "Produto Novo",
-  "description": "Descrição do produto novo",
-  "price": 30.0
-}
+[
+  {
+    "id": "1",
+    "name": "Smartphone",
+    "description":  "My Smartphone",
+    "price": 1000,
+    "userId": 1
+  },
+  {
+    "id": "2",
+    "name": "Secondary Smartphone",
+    "description":  "My secondary smartphone",
+    "price": 900,
+    "userId": 1
+  }
+]
 ```
 
 #### `PUT /products/:id`
