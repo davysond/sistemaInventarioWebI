@@ -23,8 +23,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = void 0;
+exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const userRepository = __importStar(require("../repositories/userRepository"));
+const createUser = async (data) => {
+    if (!data.name || !data.email) {
+        throw new Error('Name and email are required');
+    }
+    return await userRepository.createUser(data);
+};
+exports.createUser = createUser;
 const getAllUsers = async () => {
     return await userRepository.getAllUsers();
 };

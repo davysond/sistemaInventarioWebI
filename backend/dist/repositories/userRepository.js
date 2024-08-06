@@ -1,16 +1,41 @@
 "use strict";
-// src/repositories/userRepository.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = void 0;
-const prismaClient_1 = __importDefault(require("../infraestructure/prismaClient"));
+exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
+const createUser = async (data) => {
+    return await prisma.user.create({
+        data: {
+            name: data.name,
+            email: data.email,
+            products: {
+                create: data.products?.map(product => ({
+                    name: product.name,
+                    description: product.description,
+                    price: product.price
+                })) || [], // Usa uma lista vazia se products não for fornecido
+            },
+        },
+        include: {
+            products: true, // Inclui a lista de produtos na resposta
+        },
+    });
+};
+exports.createUser = createUser;
 const getAllUsers = async () => {
-    return await prismaClient_1.default.user.findMany();
+    return await prisma.user.findMany({
+        include: {
+            products: true, // Inclui a lista de produtos associados a cada usuário
+        },
+    });
 };
 exports.getAllUsers = getAllUsers;
 const getUserById = async (id) => {
-    return await prismaClient_1.default.user.findUnique({ where: { id } });
+    return await prisma.user.findUnique({
+        where: { id },
+        include: {
+            products: true, // Inclui a lista de produtos associados ao usuário
+        },
+    });
 };
 exports.getUserById = getUserById;

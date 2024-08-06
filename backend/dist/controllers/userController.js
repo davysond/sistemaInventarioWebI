@@ -23,8 +23,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = void 0;
+exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
 const userService = __importStar(require("../services/userService"));
+const createUser = async (req, res) => {
+    try {
+        const user = await userService.createUser(req.body);
+        res.status(201).json(user);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error creating user' });
+    }
+};
+exports.createUser = createUser;
 const getAllUsers = async (req, res) => {
     try {
         const users = await userService.getAllUsers();

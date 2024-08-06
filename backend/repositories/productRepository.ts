@@ -1,6 +1,6 @@
-// src/repositories/productRepository.ts
+import { PrismaClient, Product } from '@prisma/client';
 
-import prisma from '../infraestructure/prismaClient';
+const prisma = new PrismaClient();
 
 export const getAllProducts = async () => {
   return await prisma.product.findMany();
@@ -14,7 +14,7 @@ export const createProduct = async (data: {
   name: string;
   description?: string;
   price: number;
-  userId: number;
+  userId?: number;
 }) => {
   return await prisma.product.create({ data });
 };
