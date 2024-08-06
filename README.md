@@ -155,14 +155,14 @@ Adiciona um novo produto.
   {
     "id": "1",
     "name": "Smartphone",
-    "description":  "My Smartphone",
+    "description": "My Smartphone",
     "price": 1000,
     "userId": 1
   },
   {
     "id": "2",
     "name": "Secondary Smartphone",
-    "description":  "My secondary smartphone",
+    "description": "My secondary smartphone",
     "price": 900,
     "userId": 1
   }
@@ -175,14 +175,14 @@ Adiciona um novo produto.
   {
     "id": "1",
     "name": "Smartphone",
-    "description":  "My Smartphone",
+    "description": "My Smartphone",
     "price": 1000,
     "userId": 1
   },
   {
     "id": "2",
     "name": "Secondary Smartphone",
-    "description":  "My secondary smartphone",
+    "description": "My secondary smartphone",
     "price": 900,
     "userId": 1
   }
