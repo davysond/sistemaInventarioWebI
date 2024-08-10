@@ -36,6 +36,10 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
 
 2. A API estará disponível em `http://localhost:3000`.
 
+## Swagger
+
+URL definida para especificação da documentação através do Swagger em `http://localhost:3000/api-sistemaInventarioWebI/`
+
 ## Rotas da API
 
 ### Para Administradores
@@ -233,7 +237,3 @@ Deleta um produto existente.
   "message": "Produto deletado com sucesso."
 }
 ```
-
-## Swagger
-
-URL definida para especificação da documentação através do Swagger: http://localhost:3000/api-sistemaInventarioWebI/
