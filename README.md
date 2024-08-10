@@ -233,3 +233,7 @@ Deleta um produto existente.
   "message": "Produto deletado com sucesso."
 }
 ```
+
+## Swagger
+
+URL definida para especificação da documentação através do Swagger: http://localhost:3000/api-sistemaInventarioWebI/
