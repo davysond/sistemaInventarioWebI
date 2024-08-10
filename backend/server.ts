@@ -1,22 +1,15 @@
 import express from 'express';
-import * as userController from './controllers/userController';
-import * as productController from './controllers/productController';
+import routes from './routes/routes';
+import { setupSwagger } from './configs/swaggerConfig';
 
 const app = express();
 
 app.use(express.json());
 
-// Rotas de usuários
-app.post('/users/createUser', userController.createUser);
-app.get('/users', userController.getAllUsers);
-app.get('/users/:id', userController.getUserById);
+// Configuração do Swagger
+setupSwagger(app);
 
-// Rotas de produtos
-app.get('/products', productController.getAllProducts);
-app.get('/productsByUserId/:userId', productController.getProductsByUserId);
-app.post('/products/createProduct', productController.createProduct);
-app.put('/products/:id', productController.updateProduct);
-app.delete('/products/:id', productController.deleteProduct);
+app.use('/', routes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

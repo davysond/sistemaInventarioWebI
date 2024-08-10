@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 import * as userRepository from '../repositories/userRepository';
 
 export const createUser = async (data: {
@@ -9,7 +8,7 @@ export const createUser = async (data: {
     description?: string;
     price: number;
   }[];
-}): Promise<User> => {
+}) => {
 
   if (!data.name || !data.email) {
     throw new Error('Name and email are required');
