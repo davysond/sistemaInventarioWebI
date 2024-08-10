@@ -6,7 +6,7 @@ import { Express } from 'express';
 export const setupSwagger = (app: Express) => {
   const options = {
     definition: {
-      openapi: "3.0.0", // Corrigido para "openapi"
+      openapi: "3.0.0", 
       info: {
         title: "Sistema de Inventário - Web I",
         version: "0.1"
