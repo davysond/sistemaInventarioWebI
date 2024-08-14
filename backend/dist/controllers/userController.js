@@ -23,18 +23,65 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createUser = void 0;
 const userService = __importStar(require("../services/userService"));
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 const createUser = async (req, res) => {
     try {
-        const user = await userService.createUser(req.body);
+        const { name, email, password, products } = req.body;
+        // Validação básica dos dados
+        if (!name || !email || !password) {
+            res.status(400).json({ error: 'Name, email, and password are required' });
+            return;
+        }
+        // Chama o serviço para criar o usuário
+        const user = await userService.createUser({
+            name,
+            email,
+            password,
+            products,
+        });
+        // Responde com o usuário criado
         res.status(201).json(user);
     }
     catch (error) {
+        console.error('Error creating user:', error); // Log para depuração
         res.status(500).json({ error: 'Error creating user' });
     }
 };
 exports.createUser = createUser;
+const promoteUserToAdmin = async (req, res) => {
+    try {
+        const { userId } = req.body; // Assume que userId é enviado no corpo da requisição
+        if (!userId) {
+            res.status(400).json({ error: 'User ID is required' });
+            return;
+        }
+        const user = await userService.promoteUserToAdmin(userId);
+        res.status(200).json(user);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error promoting user to admin' });
+    }
+};
+exports.promoteUserToAdmin = promoteUserToAdmin;
+const deleteUser = async (req, res) => {
+    try {
+        const adminUserId = req.body.adminUserId; // ID do administrador que está fazendo a solicitação
+        const userId = req.body.userId; // ID do usuário a ser deletado
+        if (!adminUserId || !userId) {
+            res.status(400).json({ error: 'Both adminUserId and userId are required' });
+            return;
+        }
+        await userService.deleteUser(adminUserId, userId);
+        res.status(200).json({ message: 'User deleted successfully' });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Error deleting user' });
+    }
+};
+exports.deleteUser = deleteUser;
 const getAllUsers = async (req, res) => {
     try {
         const users = await userService.getAllUsers();

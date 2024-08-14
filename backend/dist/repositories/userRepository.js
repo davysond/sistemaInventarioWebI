@@ -1,19 +1,28 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createNewUser = void 0;
 const client_1 = require("@prisma/client");
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const prisma = new client_1.PrismaClient();
-const createUser = async (data) => {
+const createNewUser = async (data) => {
+    const { name, email, password, products } = data;
+    // Criptografa a senha
+    const hashedPassword = await bcrypt_1.default.hash(password, 10);
+    // Cria o novo usuário e seus produtos associados
     return await prisma.user.create({
         data: {
-            name: data.name,
-            email: data.email,
+            name,
+            email,
+            password: hashedPassword,
             products: {
-                create: data.products?.map(product => ({
+                create: products?.map(product => ({
                     name: product.name,
                     description: product.description,
                     price: product.price
-                })) || [], // Usa uma lista vazia se products não for fornecido
+                })) || [],
             },
         },
         include: {
@@ -21,7 +30,20 @@ const createUser = async (data) => {
         },
     });
 };
-exports.createUser = createUser;
+exports.createNewUser = createNewUser;
+const promoteUserToAdmin = async (userId) => {
+    return await prisma.user.update({
+        where: { id: userId },
+        data: { isAdmin: true },
+    });
+};
+exports.promoteUserToAdmin = promoteUserToAdmin;
+const deleteUser = async (userId) => {
+    return await prisma.user.delete({
+        where: { id: userId },
+    });
+};
+exports.deleteUser = deleteUser;
 const getAllUsers = async () => {
     return await prisma.user.findMany({
         include: {

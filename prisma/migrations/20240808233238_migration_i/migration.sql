@@ -23,3 +23,7 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- ADDUserPassword
+ALTER TABLE "User" ADD COLUMN "password" TEXT DEFAULT '';
+

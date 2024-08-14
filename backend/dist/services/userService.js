@@ -22,16 +22,65 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createUser = void 0;
 const userRepository = __importStar(require("../repositories/userRepository"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 const createUser = async (data) => {
-    if (!data.name || !data.email) {
-        throw new Error('Name and email are required');
-    }
-    return await userRepository.createUser(data);
+    const { name, email, password, products } = data;
+    // Criptografa a senha
+    const hashedPassword = await bcrypt_1.default.hash(password, 10);
+    // Cria o novo usuário e seus produtos associados
+    return await prisma.user.create({
+        data: {
+            name,
+            email,
+            password: hashedPassword,
+            products: {
+                create: products?.map(product => ({
+                    name: product.name,
+                    description: product.description,
+                    price: product.price
+                })) || [], // Usa uma lista vazia se products não for fornecido
+            },
+        },
+        include: {
+            products: true, // Inclui a lista de produtos na resposta
+        },
+    });
 };
 exports.createUser = createUser;
+const promoteUserToAdmin = async (userId) => {
+    if (!userId) {
+        throw new Error('User ID is required');
+    }
+    const user = await userRepository.promoteUserToAdmin(userId);
+    return user;
+};
+exports.promoteUserToAdmin = promoteUserToAdmin;
+const deleteUser = async (adminUserId, userId) => {
+    // Verifique se o administrador existe e se é um administrador
+    const adminUser = await prisma.user.findUnique({
+        where: { id: adminUserId },
+    });
+    if (!adminUser || !adminUser.isAdmin) {
+        throw new Error('Unauthorized: Only administrators can delete users');
+    }
+    // Verifique se o usuário a ser deletado existe
+    const userToDelete = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+    if (!userToDelete) {
+        throw new Error('User not found');
+    }
+    return await userRepository.deleteUser(userId);
+};
+exports.deleteUser = deleteUser;
 const getAllUsers = async () => {
     return await userRepository.getAllUsers();
 };

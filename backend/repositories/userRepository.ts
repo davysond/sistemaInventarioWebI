@@ -1,26 +1,35 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
-export const createUser = async (data: {
+export const createNewUser = async (data: {
   name: string;
   email: string;
+  password: string;
   products?: {
     name: string;
     description?: string;
     price: number;
   }[];
 }) => {
+  const { name, email, password, products } = data;
+
+  // Criptografa a senha
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // Cria o novo usuário e seus produtos associados
   return await prisma.user.create({
     data: {
-      name: data.name,
-      email: data.email,
+      name,
+      email,
+      password: hashedPassword,
       products: {
-        create: data.products?.map(product => ({
+        create: products?.map(product => ({
           name: product.name,
           description: product.description,
           price: product.price
-        })) || [], // Usa uma lista vazia se products não for fornecido
+        })) || [], 
       },
     },
     include: {
@@ -28,6 +37,19 @@ export const createUser = async (data: {
     },
   });
 }
+
+export const promoteUserToAdmin = async (userId: number) => {
+  return await prisma.user.update({
+    where: { id: userId },
+    data: { isAdmin: true },
+  });
+};
+
+export const deleteUser = async (userId: number) => {
+  return await prisma.user.delete({
+    where: { id: userId },
+  });
+};
 
 export const getAllUsers = async () => {
   return await prisma.user.findMany({
