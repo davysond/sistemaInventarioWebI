@@ -75,7 +75,7 @@ Promove um usuário existente para administrador através do seu ID.
 
 #### `DELETE /users/delete`
 
-Deleta um usuário existe no sistema através do seu ID. Essa funcionalidade está disponível uniciamente para usuários que também são administradores.
+Deleta um usuário existe no sistema através do seu ID. Essa funcionalidade está disponível unicamente para usuários que também são administradores.
 
 **Exemplo de resposta:**
 ```json
