@@ -69,7 +69,19 @@ Promove um usuário existente para administrador através do seu ID.
 **Exemplo de resposta:**
 ```json
   {
-    "userId": "1"
+    "userId": 1
+  }
+```
+
+#### `DELETE /users/delete`
+
+Deleta um usuário existe no sistema através do seu ID. Essa funcionalidade está disponível uniciamente para usuários que também são administradores.
+
+**Exemplo de resposta:**
+```json
+  {
+    "adminUserId": 1,
+    "userId": 2
   }
 ```
 
