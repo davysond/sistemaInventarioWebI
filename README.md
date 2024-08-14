@@ -42,8 +42,6 @@ URL definida para especificação da documentação através do Swagger em `http
 
 ## Rotas da API
 
-### Para Administradores
-
 #### `POST /users/createUser`
 
 Cria um novo usuário no sistema a partir das propriedades informadas.
@@ -62,6 +60,17 @@ Cria um novo usuário no sistema a partir das propriedades informadas.
     "email": "maria@example.com"
   }
 ]
+```
+
+#### `POST /users/promoteToAdmin`
+
+Promove um usuário existente para administrador através do seu ID.
+
+**Exemplo de resposta:**
+```json
+  {
+    "userId": "1"
+  }
 ```
 
 #### `GET /users`
