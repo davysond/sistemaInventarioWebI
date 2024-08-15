@@ -20,13 +20,44 @@ model User {
   password String
   isAdmin  Boolean   @default(false)
   products Product[]
+  orders   Order[]   // Relação com a entidade Order
 }
 
+
 model Product {
-  id          Int     @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   description String?
   price       Float
   userId      Int?
-  user        User?    @relation(fields: [userId], references: [id])
+  user        User?       @relation(fields: [userId], references: [id])
+  categoryId  Int?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[] // Relação com a entidade OrderItem
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  description String?
+  products Product[]
+}
+
+model Order {
+  id          Int       @id @default(autoincrement())
+  totalAmount Float?
+  createdAt   DateTime?  @default(now())
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id])
+  orderItems  OrderItem[]
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  quantity  Int
+  price     Float
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
 }

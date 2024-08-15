@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import * as userController from '../controllers/userController';
 import * as productController from '../controllers/productController';
+import * as orderController from '../controllers/orderController';
+import * as orderItemController from '../controllers/orderItemController';
+import * as categoryController from '../controllers/categoryController';
 
 const router = Router();
 
@@ -242,6 +245,9 @@ router.get('/productsByUserId/:userId', productController.getProductsByUserId);
  *                 type: number
  *                 format: float
  *                 example: 19.99
+ *               categoryId:
+ *                 type: number
+ *                 example: 1
  *     responses:
  *       '201':
  *         description: Product created successfully
@@ -305,5 +311,245 @@ router.put('/products/:id', productController.updateProduct);
  *         description: Product not found
  */
 router.delete('/products/:id', productController.deleteProduct);
+
+/**
+ * @swagger
+ * /orders:
+ *   post:
+ *     summary: Create a new order with optional order items
+ *     description: Creates a new order and optionally adds items to it. The total amount is calculated automatically based on the order items.
+ *     requestBody:
+ *       description: Order details including userId and optional orderItems
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: integer
+ *                 example: 1
+ *               orderItems:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     productId:
+ *                       type: integer
+ *                       example: 1
+ *                     quantity:
+ *                       type: integer
+ *                       example: 2
+ *     responses:
+ *       '201':
+ *         description: Order created successfully
+ *       '400':
+ *         description: Bad request (e.g., missing userId or orderItems)
+ *       '500':
+ *         description: Internal server error
+ */
+router.post('/orders', orderController.createOrder);
+
+/**
+ * @swagger
+ * /order-items/{orderId}/items:
+ *   post:
+ *     summary: Add an item to an existing order
+ *     description: Adds a new item to an existing order. The total amount of the order is updated automatically.
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         description: The ID of the order to which the item should be added
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     requestBody:
+ *       description: Order item details including productId and quantity
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               productId:
+ *                 type: integer
+ *                 example: 1
+ *               quantity:
+ *                 type: integer
+ *                 example: 2
+ *     responses:
+ *       '201':
+ *         description: Order item added successfully
+ *       '400':
+ *         description: Bad request (e.g., missing productId or quantity)
+ *       '404':
+ *         description: Order or product not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.post('/order-items/:orderId', orderItemController.addOrderItem);
+
+/**
+ * @swagger
+ * /orders:
+ *   get:
+ *     summary: Get all orders
+ *     description: Retrieves a list of all orders in the system.
+ *     responses:
+ *       '200':
+ *         description: List of all orders
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/orders', orderController.getAllOrders);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Get order by ID
+ *     description: Retrieves a specific order by its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       '200':
+ *         description: Order found
+ *       '404':
+ *         description: Order not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/orders/:id', orderController.getOrderById);
+
+/**
+ * @swagger
+ * /orders:
+ *   delete:
+ *     summary: Delete an order
+ *     description: Deletes an order by its ID.
+ *     requestBody:
+ *       description: Order ID of the order to be deleted
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orderId:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       '200':
+ *         description: Order deleted successfully
+ *       '400':
+ *         description: Bad request (e.g., missing orderId)
+ *       '404':
+ *         description: Order not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.delete('/orders', orderController.deleteOrder);
+
+/**
+ * @swagger
+ * /order-items:
+ *   delete:
+ *     summary: Delete an order item
+ *     description: Deletes an order item by its ID.
+ *     requestBody:
+ *       description: Order item ID of the item to be deleted
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orderItemId:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       '200':
+ *         description: Order item deleted successfully
+ *       '400':
+ *         description: Bad request (e.g., missing orderItemId)
+ *       '404':
+ *         description: Order item not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.delete('/order-items', orderItemController.deleteOrderItem);
+
+/**
+ * @swagger
+ * /category:
+ *   post:
+ *     summary: Create a new category
+ *     description: Creates a new category with the specified name and description.
+ *     requestBody:
+ *       description: Category details including name and optional description
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: 'Electronics'
+ *               description:
+ *                 type: string
+ *                 example: 'Devices and gadgets'
+ *     responses:
+ *       '201':
+ *         description: Category created successfully
+ *       '400':
+ *         description: Bad request (e.g., missing name)
+ *       '500':
+ *         description: Internal server error
+ */
+router.post('/category', categoryController.createCategory);
+
+/**
+ * @swagger
+ * /category:
+ *   get:
+ *     summary: Get all categories
+ *     description: Retrieves a list of all categories in the system.
+ *     responses:
+ *       '200':
+ *         description: List of all categories
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/category', categoryController.getAllCategories);
+
+/**
+ * @swagger
+ * /category:
+ *   delete:
+ *     summary: Delete a category
+ *     description: Deletes a category by its ID.
+ *     requestBody:
+ *       description: Category ID of the category to be deleted
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               categoryId:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       '200':
+ *         description: Category deleted successfully
+ *       '400':
+ *         description: Bad request (e.g., missing categoryId)
+ *       '404':
+ *         description: Category not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.delete('/category', categoryController.deleteCategory);
 
 export default router;

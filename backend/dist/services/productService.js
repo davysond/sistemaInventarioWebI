@@ -23,8 +23,29 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.updateProduct = exports.createProduct = exports.getProductsByUserId = exports.getAllProducts = void 0;
+exports.deleteProduct = exports.updateProduct = exports.getProductsByUserId = exports.getAllProducts = exports.getProductById = exports.createProduct = void 0;
 const productRepository = __importStar(require("../repositories/productRepository"));
+const createProduct = async (data) => {
+    const { name, description, price, userId, categoryId } = data;
+    if (!name || !price) {
+        throw new Error('Name and price are required');
+    }
+    return await productRepository.createProduct({
+        name,
+        description,
+        price,
+        userId,
+        categoryId,
+    });
+};
+exports.createProduct = createProduct;
+const getProductById = async (id) => {
+    if (!id) {
+        throw new Error('Product ID is required');
+    }
+    return await productRepository.getProductById(id);
+};
+exports.getProductById = getProductById;
 const getAllProducts = async () => {
     return await productRepository.getAllProducts();
 };
@@ -33,10 +54,6 @@ const getProductsByUserId = async (userId) => {
     return await productRepository.getProductsByUserId(userId);
 };
 exports.getProductsByUserId = getProductsByUserId;
-const createProduct = async (data) => {
-    return await productRepository.createProduct(data);
-};
-exports.createProduct = createProduct;
 const updateProduct = async (id, data) => {
     return await productRepository.updateProduct(id, data);
 };

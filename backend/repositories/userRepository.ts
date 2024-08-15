@@ -55,6 +55,7 @@ export const getAllUsers = async () => {
   return await prisma.user.findMany({
     include: {
       products: true, // Inclui a lista de produtos associados a cada usuário
+      orders: true
     },
   });
 };
@@ -64,6 +65,7 @@ export const getUserById = async (id: number) => {
     where: { id },
     include: {
       products: true, // Inclui a lista de produtos associados ao usuário
+      orders: true
     },
   });
 };

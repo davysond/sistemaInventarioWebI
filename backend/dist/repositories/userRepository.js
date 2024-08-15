@@ -47,7 +47,8 @@ exports.deleteUser = deleteUser;
 const getAllUsers = async () => {
     return await prisma.user.findMany({
         include: {
-            products: true, // Inclui a lista de produtos associados a cada usuário
+            products: true,
+            orders: true
         },
     });
 };
@@ -56,7 +57,8 @@ const getUserById = async (id) => {
     return await prisma.user.findUnique({
         where: { id },
         include: {
-            products: true, // Inclui a lista de produtos associados ao usuário
+            products: true,
+            orders: true
         },
     });
 };

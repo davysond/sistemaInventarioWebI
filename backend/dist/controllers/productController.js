@@ -23,8 +23,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.updateProduct = exports.createProduct = exports.getProductsByUserId = exports.getAllProducts = void 0;
+exports.deleteProduct = exports.updateProduct = exports.getProductsByUserId = exports.getAllProducts = exports.createProduct = void 0;
 const productService = __importStar(require("../services/productService"));
+const utils_1 = require("../utils/utils");
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
+const createProduct = async (req, res) => {
+    try {
+        const { name, description, price, categoryId } = req.body;
+        if (!name || !price) {
+            res.status(400).json({ error: 'Name and price are required' });
+            return;
+        }
+        const product = await productService.createProduct({
+            name,
+            description,
+            price,
+            categoryId,
+        });
+        const filteredProduct = (0, utils_1.filterNulls)(product);
+        res.status(201).json(filteredProduct);
+    }
+    catch (error) {
+        console.error('Error creating product:', error);
+        res.status(500).json({ error: 'Error creating product' });
+    }
+};
+exports.createProduct = createProduct;
 const getAllProducts = async (req, res) => {
     try {
         const products = await productService.getAllProducts();
@@ -46,16 +71,6 @@ const getProductsByUserId = async (req, res) => {
     }
 };
 exports.getProductsByUserId = getProductsByUserId;
-const createProduct = async (req, res) => {
-    try {
-        const product = await productService.createProduct(req.body);
-        res.status(201).json(product);
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Failed to create product' });
-    }
-};
-exports.createProduct = createProduct;
 const updateProduct = async (req, res) => {
     try {
         const { id } = req.params;

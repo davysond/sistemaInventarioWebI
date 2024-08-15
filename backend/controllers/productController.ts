@@ -1,5 +1,33 @@
 import { Request, Response } from 'express';
 import * as productService from '../services/productService';
+import { filterNulls } from '../utils/utils';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export const createProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, description, price, categoryId } = req.body;
+
+    if (!name || !price) {
+      res.status(400).json({ error: 'Name and price are required' });
+      return;
+    }
+
+    const product = await productService.createProduct({
+      name,
+      description,
+      price,
+      categoryId,
+    });
+
+    const filteredProduct = filterNulls(product);
+    res.status(201).json(filteredProduct);
+  } catch (error) {
+    console.error('Error creating product:', error);
+    res.status(500).json({ error: 'Error creating product' });
+  }
+};
 
 export const getAllProducts = async (req: Request, res: Response) => {
   try {
@@ -17,15 +45,6 @@ export const getProductsByUserId = async (req: Request, res: Response) => {
     res.json(products);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch products' });
-  }
-};
-
-export const createProduct = async (req: Request, res: Response) => {
-  try {
-    const product = await productService.createProduct(req.body);
-    res.status(201).json(product);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create product' });
   }
 };
 
