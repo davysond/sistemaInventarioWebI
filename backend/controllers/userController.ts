@@ -31,20 +31,23 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const promoteUserToAdmin = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { userId } = req.body; // Assume que userId é enviado no corpo da requisição
-    if (!userId) {
-      res.status(400).json({ error: 'User ID is required' });
-      return;
-    }
+/**
+   * Promove um usuário para administrador.
+   * @param req - A requisição HTTP.
+   * @param res - A resposta HTTP.
+   */
 
-    const user = await userService.promoteUserToAdmin(userId);
-    res.status(200).json(user);
+export const promoteUserToAdmin = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    // Chama o serviço para promover o usuário
+    const updatedUser = await userService.promoteUserToAdmin(Number(userId));
+    return res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(500).json({ error: 'Error promoting user to admin' });
+    // Retorna um erro 500 em caso de falha
+    return res.status(500).json({ error: 'Failed to promote user to admin'});
   }
-};
+}
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   try {

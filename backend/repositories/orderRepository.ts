@@ -1,20 +1,24 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, PaymentMethod, PaymentStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export const createOrder = async (data: {
     userId: number;
+    paymentMethod: PaymentMethod;
+    paymentStatus?: PaymentStatus;
     orderItems?: {
       productId: number;
       quantity: number;
     }[];
   }) => {
-    const { userId, orderItems } = data;
+    const { userId, paymentMethod, paymentStatus = PaymentStatus.PENDING, orderItems } = data;
   
     // Cria o pedido sem totalAmount e orderItems
     const order = await prisma.order.create({
       data: {
         user: { connect: { id: userId } },
+        paymentMethod,
+        paymentStatus
       },
     });
   
@@ -58,6 +62,29 @@ export const createOrder = async (data: {
       where: { id: order.id },
       include: { orderItems: { include: { product: true } } },
     });
+  };
+
+  export const updatePaymentStatus = async (orderId: number, paymentStatus: PaymentStatus) => {
+    return prisma.order.update({
+      where: { id: orderId },
+      data: { paymentStatus },
+    });
+  }
+
+  export const updatePayment = async (orderId: number) => {
+    try {
+      // Atualiza o status de pagamento do pedido para COMPLETED
+      const updatedOrder = await prisma.order.update({
+        where: { id: orderId },
+        data: {
+          paymentStatus: PaymentStatus.COMPLETED,
+        },
+      });
+  
+      return updatedOrder;
+    } catch (error) {
+      throw new Error(`Failed to finalize payment`);
+    }
   };
   
   const calculatePrice = async (productId: number) => {

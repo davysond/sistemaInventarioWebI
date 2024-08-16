@@ -56,11 +56,12 @@ const createUser = async (data) => {
 };
 exports.createUser = createUser;
 const promoteUserToAdmin = async (userId) => {
-    if (!userId) {
-        throw new Error('User ID is required');
+    try {
+        return await userRepository.promoteUserToAdmin(userId);
     }
-    const user = await userRepository.promoteUserToAdmin(userId);
-    return user;
+    catch (error) {
+        throw new Error(`Failed to promote user to admin:`);
+    }
 };
 exports.promoteUserToAdmin = promoteUserToAdmin;
 const deleteUser = async (adminUserId, userId) => {

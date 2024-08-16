@@ -26,7 +26,7 @@ const router = Router();
  *               email:
  *                 type: string
  *                 example: john.doe@example.com
- *               passoword:
+ *               password:
  *                  type: string
  *                  example: testPassword*
  *     responses:
@@ -39,20 +39,17 @@ router.post('/users/createUser', userController.createUser);
 
 /**
  * @swagger
- * /users/promoteAsAdmin:
+ * /users/{userId}/promote:
  *   post:
- *     summary: Promote a user to administrator
- *     description: Promotes an existing user to administrator status in the system.
- *     requestBody:
- *       description: User ID of the user to be promoted to administrator
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               userId:
- *                 type: integer
- *                 example: 1
+ *     summary: Promote a user to admin
+ *     description: Promotes a user to admin status and includes their associated products and orders.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1
  *     responses:
  *       '200':
  *         description: User promoted to administrator successfully
@@ -63,7 +60,7 @@ router.post('/users/createUser', userController.createUser);
  *       '500':
  *         description: Internal server error
  */
-router.post('/users/promoteToAdmin', userController.promoteUserToAdmin);
+router.post('/users/:userId/promote', userController.promoteUserToAdmin);
 
 /**
  * @swagger
@@ -317,9 +314,9 @@ router.delete('/products/:id', productController.deleteProduct);
  * /orders:
  *   post:
  *     summary: Create a new order with optional order items
- *     description: Creates a new order and optionally adds items to it. The total amount is calculated automatically based on the order items.
+ *     description: Creates a new order and optionally adds items to it. The total amount is calculated automatically based on the order items. You must specify the payment method, and you can optionally specify the payment status.
  *     requestBody:
- *       description: Order details including userId and optional orderItems
+ *       description: Order details including userId, paymentMethod, and optional orderItems and paymentStatus
  *       content:
  *         application/json:
  *           schema:
@@ -328,6 +325,21 @@ router.delete('/products/:id', productController.deleteProduct);
  *               userId:
  *                 type: integer
  *                 example: 1
+ *               paymentMethod:
+ *                 type: string
+ *                 enum:
+ *                   - CREDIT_CARD
+ *                   - DEBIT_CARD
+ *                   - PAYPAL
+ *                   - BANK_TRANSFER
+ *                 example: CREDIT_CARD
+ *               paymentStatus:
+ *                 type: string
+ *                 enum:
+ *                   - PENDING
+ *                   - COMPLETED
+ *                   - FAILED
+ *                 example: PENDING
  *               orderItems:
  *                 type: array
  *                 items:
@@ -342,12 +354,78 @@ router.delete('/products/:id', productController.deleteProduct);
  *     responses:
  *       '201':
  *         description: Order created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 userId:
+ *                   type: integer
+ *                   example: 1
+ *                 totalAmount:
+ *                   type: number
+ *                   format: float
+ *                   example: 59.99
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: 2024-08-16T00:00:00Z
+ *                 paymentMethod:
+ *                   type: string
+ *                   example: CREDIT_CARD
+ *                 paymentStatus:
+ *                   type: string
+ *                   example: PENDING
+ *                 orderItems:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       productId:
+ *                         type: integer
+ *                         example: 1
+ *                       quantity:
+ *                         type: integer
+ *                         example: 2
+ *                       price:
+ *                         type: number
+ *                         format: float
+ *                         example: 29.99
  *       '400':
- *         description: Bad request (e.g., missing userId or orderItems)
+ *         description: Bad request (e.g., missing userId, paymentMethod, or invalid data)
  *       '500':
  *         description: Internal server error
  */
 router.post('/orders', orderController.createOrder);
+
+/**
+ * @swagger
+ * /orders/{orderId}/payment:
+ *   post:
+ *     summary: Finalize the payment for an existing order
+ *     description: Updates the payment status of an existing order to COMPLETED.
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         description: The ID of the order to finalize payment for
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *     responses:
+ *       '200':
+ *         description: Payment finalized successfully
+ *       '400':
+ *         description: Bad request (e.g., invalid order ID)
+ *       '404':
+ *         description: Order not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.post('/orders/:orderId/payment', orderController.finishPayment);
 
 /**
  * @swagger

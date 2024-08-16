@@ -1,14 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOrder = exports.getOrderById = exports.getAllOrders = exports.createOrder = void 0;
+exports.deleteOrder = exports.getOrderById = exports.getAllOrders = exports.updatePayment = exports.updatePaymentStatus = exports.createOrder = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createOrder = async (data) => {
-    const { userId, orderItems } = data;
+    const { userId, paymentMethod, paymentStatus = client_1.PaymentStatus.PENDING, orderItems } = data;
     // Cria o pedido sem totalAmount e orderItems
     const order = await prisma.order.create({
         data: {
             user: { connect: { id: userId } },
+            paymentMethod,
+            paymentStatus
         },
     });
     // Se orderItems são fornecidos, cria os itens e atualiza o totalAmount do pedido
@@ -42,6 +44,29 @@ const createOrder = async (data) => {
     });
 };
 exports.createOrder = createOrder;
+const updatePaymentStatus = async (orderId, paymentStatus) => {
+    return prisma.order.update({
+        where: { id: orderId },
+        data: { paymentStatus },
+    });
+};
+exports.updatePaymentStatus = updatePaymentStatus;
+const updatePayment = async (orderId) => {
+    try {
+        // Atualiza o status de pagamento do pedido para COMPLETED
+        const updatedOrder = await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                paymentStatus: client_1.PaymentStatus.COMPLETED,
+            },
+        });
+        return updatedOrder;
+    }
+    catch (error) {
+        throw new Error(`Failed to finalize payment`);
+    }
+};
+exports.updatePayment = updatePayment;
 const calculatePrice = async (productId) => {
     const product = await prisma.product.findUnique({ where: { id: productId } });
     if (!product) {

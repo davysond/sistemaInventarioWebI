@@ -1,10 +1,12 @@
 import * as orderRepository from '../repositories/orderRepository';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, PaymentMethod, PaymentStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export const createOrder = async (data: {
     userId: number;
+    paymentMethod: PaymentMethod,
+    paymentStatus?: PaymentStatus
     orderItems?: {
       productId: number;
       quantity: number;
@@ -12,6 +14,28 @@ export const createOrder = async (data: {
   }) => {
     return await orderRepository.createOrder(data);
 };
+
+export const finalizePayment = async (orderId: number) => {
+  try {
+    // Atualiza o status de pagamento do pedido para COMPLETED
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: {
+        paymentStatus: PaymentStatus.COMPLETED,
+      },
+    });
+
+    return updatedOrder;
+  } catch (error) {
+    // Lança um erro com uma mensagem mais específica
+    throw new Error(`Failed to finalize payment:`);
+  }
+};
+
+export const processPayment = async (orderId: number, status: PaymentStatus) => {
+  const updatedOrder = await orderRepository.updatePaymentStatus(orderId, status);
+  return updatedOrder;
+}
 
 export const getOrderById = async (id: number) => {
   return await orderRepository.getOrderById(id);

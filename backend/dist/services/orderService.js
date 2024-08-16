@@ -23,7 +23,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOrder = exports.getAllOrders = exports.getOrderById = exports.createOrder = void 0;
+exports.deleteOrder = exports.getAllOrders = exports.getOrderById = exports.processPayment = exports.finalizePayment = exports.createOrder = void 0;
 const orderRepository = __importStar(require("../repositories/orderRepository"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
@@ -31,6 +31,28 @@ const createOrder = async (data) => {
     return await orderRepository.createOrder(data);
 };
 exports.createOrder = createOrder;
+const finalizePayment = async (orderId) => {
+    try {
+        // Atualiza o status de pagamento do pedido para COMPLETED
+        const updatedOrder = await prisma.order.update({
+            where: { id: orderId },
+            data: {
+                paymentStatus: client_1.PaymentStatus.COMPLETED,
+            },
+        });
+        return updatedOrder;
+    }
+    catch (error) {
+        // Lança um erro com uma mensagem mais específica
+        throw new Error(`Failed to finalize payment:`);
+    }
+};
+exports.finalizePayment = finalizePayment;
+const processPayment = async (orderId, status) => {
+    const updatedOrder = await orderRepository.updatePaymentStatus(orderId, status);
+    return updatedOrder;
+};
+exports.processPayment = processPayment;
 const getOrderById = async (id) => {
     return await orderRepository.getOrderById(id);
 };

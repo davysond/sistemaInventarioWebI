@@ -50,6 +50,8 @@ model Order {
   userId      Int
   user        User       @relation(fields: [userId], references: [id])
   orderItems  OrderItem[]
+  paymentStatus PaymentStatus?  @default(PENDING)
+  paymentMethod PaymentMethod
 }
 
 model OrderItem {
@@ -60,4 +62,18 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   orderId   Int
   order     Order   @relation(fields: [orderId], references: [id])
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  PIX
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }

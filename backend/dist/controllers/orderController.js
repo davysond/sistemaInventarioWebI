@@ -23,13 +23,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteOrder = exports.getOrderById = exports.getAllOrders = exports.createOrder = void 0;
+exports.deleteOrder = exports.getOrderById = exports.getAllOrders = exports.updatePaymentStatus = exports.finishPayment = exports.createOrder = void 0;
 const orderService = __importStar(require("../services/orderService"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createOrder = async (req, res) => {
     try {
-        const { userId, orderItems } = req.body;
+        const { userId, paymentMethod, paymentStatus, orderItems } = req.body;
         // Validação básica dos dados
         if (!userId || !orderItems) {
             res.status(400).json({ error: 'User ID and order items are required' });
@@ -38,6 +38,8 @@ const createOrder = async (req, res) => {
         // Chama o serviço para criar o pedido
         const order = await orderService.createOrder({
             userId,
+            paymentMethod,
+            paymentStatus,
             orderItems,
         });
         // Responde com o pedido criado
@@ -49,6 +51,31 @@ const createOrder = async (req, res) => {
     }
 };
 exports.createOrder = createOrder;
+const finishPayment = async (req, res) => {
+    const { orderId } = req.params;
+    try {
+        // Converte o orderId para número
+        const id = parseInt(orderId, 10);
+        if (isNaN(id)) {
+            return res.status(400).json({ error: 'Invalid order ID' });
+        }
+        // Chama o serviço para finalizar o pagamento
+        const updatedOrder = await orderService.finalizePayment(id);
+        return res.status(200).json(updatedOrder);
+    }
+    catch (error) {
+        // Retorna um erro 500 em caso de falha
+        return res.status(500).json({ error: 'Error finalizing order' });
+    }
+};
+exports.finishPayment = finishPayment;
+const updatePaymentStatus = async (req, res) => {
+    const { orderId, paymentStatus } = req.body;
+    if (!Object.values(client_1.PaymentStatus).includes(paymentStatus)) {
+        return res.status(400).json({ error: "Invalid payment status." });
+    }
+};
+exports.updatePaymentStatus = updatePaymentStatus;
 const getAllOrders = async (req, res) => {
     try {
         const orders = await orderService.getAllOrders();

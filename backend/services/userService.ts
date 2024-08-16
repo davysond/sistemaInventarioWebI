@@ -40,12 +40,11 @@ export const createUser = async (data: {
 };
 
 export const promoteUserToAdmin = async (userId: number) => {
-  if (!userId) {
-    throw new Error('User ID is required');
+  try {
+    return await userRepository.promoteUserToAdmin(userId);
+  } catch (error) {
+    throw new Error(`Failed to promote user to admin:`);
   }
-
-  const user = await userRepository.promoteUserToAdmin(userId);
-  return user;
 };
 
 export const deleteUser = async (adminUserId: number, userId: number) => {
