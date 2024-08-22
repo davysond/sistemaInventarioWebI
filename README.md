@@ -258,3 +258,178 @@ Deleta um produto existente.
   "message": "Produto deletado com sucesso."
 }
 ```
+
+#### `POST /orders`
+
+Cria um novo pedido com itens opcionais.
+
+**Exemplo de resposta:**
+```json
+{
+  "id": "1",
+  "userId": "1",
+  "totalAmount": 59.99,
+  "createdAt": "2024-08-16T00:00:00Z",
+  "paymentMethod": "CREDIT_CARD",
+  "paymentStatus": "PENDING",
+  "orderItems": [
+    {
+      "productId": "1",
+      "quantity": 2,
+      "price": 29.99
+    }
+  ]
+}
+```
+
+#### `POST /orders/:orderId/payment`
+
+Finaliza o pagamento de um pedido existente.
+
+**Exemplo de resposta:**
+```json
+{
+  "id": "1",
+  "paymentStatus": "COMPLETED"
+}
+```
+
+#### `POST /order-items/:orderId`
+
+Adiciona um item a um pedido existente.
+
+**Exemplo de resposta:**
+```json
+{
+  "orderId": "1",
+  "productId": "1",
+  "quantity": 2,
+  "price": 29.99
+}
+```
+
+#### `GET /orders`
+
+Retorna uma lista de todos os pedidos.
+
+**Exemplo de resposta:**
+```json
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "totalAmount": 59.99,
+    "createdAt": "2024-08-16T00:00:00Z",
+    "paymentMethod": "CREDIT_CARD",
+    "paymentStatus": "PENDING"
+  },
+  {
+    "id": "2",
+    "userId": "2",
+    "totalAmount": 89.99,
+    "createdAt": "2024-08-16T00:00:00Z",
+    "paymentMethod": "PAYPAL",
+    "paymentStatus": "COMPLETED"
+  }
+]
+```
+#### `GET /orders/:id`
+
+Retorna detalhes de um pedido específico pelo ID.
+
+**Exemplo de resposta:**
+```json
+{
+  "id": "1",
+  "userId": "1",
+  "totalAmount": 59.99,
+  "createdAt": "2024-08-16T00:00:00Z",
+  "paymentMethod": "CREDIT_CARD",
+  "paymentStatus": "PENDING",
+  "orderItems": [
+    {
+      "productId": "1",
+      "quantity": 2,
+      "price": 29.99
+    }
+  ]
+}
+```
+
+#### `DELETE /orders/:id`
+
+Deleta um pedido pelo ID.
+
+**Parâmetros:**
+- `id` (obrigatório): ID do pedido.
+
+**Exemplo de resposta:**
+```json
+{
+  "message": "Pedido deletado com sucesso."
+}
+```
+
+#### `DELETE /orders-items/:id`
+
+Deleta um item de pedido pelo ID.
+
+**Parâmetros:**
+- `id` (obrigatório): ID do item de pedido.
+
+**Exemplo de resposta:**
+```json
+{
+  "message": "Item do pedido deletado com sucesso."
+}
+```
+
+#### `POST /category/`
+
+Cria uma nova categoria.
+
+**Exemplo de resposta:**
+```json
+{
+  "id": "1",
+  "name": "Electronics",
+  "description": "Devices and gadgets"
+}
+```
+
+#### `GET /category`
+
+Retorna uma lista de todas as categorias.
+
+**Exemplo de resposta:**
+```json
+[
+  {
+    "id": "1",
+    "name": "Electronics",
+    "description": "Devices and gadgets"
+  },
+  {
+    "id": "2",
+    "name": "Furniture",
+    "description": "Home and office furniture"
+  }
+]
+```
+
+#### `DELETE /category/:id`
+
+Deleta uma categoria pelo ID.
+
+**Parâmetros:**
+- `id` (obrigatório): ID da categoria.
+
+**Exemplo de resposta:**
+```json
+{
+  "message": "Categoria deletada com sucesso."
+}
+```
+
+
+
