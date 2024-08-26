@@ -161,9 +161,6 @@ Retorna uma lista de produtos de um usuário específico com base no ID do usuá
   }
 ]
 ```
-
-### Para Usuários
-
 #### `POST /products/createProduct`
 
 Adiciona um novo produto.
