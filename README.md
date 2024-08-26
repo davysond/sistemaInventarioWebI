@@ -25,7 +25,7 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
    npm install
    ```
 
-4. Configure o arquivo `.env` com as variáveis de ambiente necessárias, como a URL de conexão com o banco de dados MongoDB.
+4. Configure o arquivo `.env` com as variáveis de ambiente necessárias, como a URL de conexão com o banco de dados PostgreSQL.
 
 ## Executando a Aplicação
 
