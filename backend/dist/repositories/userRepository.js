@@ -3,16 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createNewUser = void 0;
+exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createUser = void 0;
 const client_1 = require("@prisma/client");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const authConfig_1 = require("../configs/authConfig");
 const prisma = new client_1.PrismaClient();
-const createNewUser = async (data) => {
+const createUser = async (data) => {
     const { name, email, password, products } = data;
     // Criptografa a senha
     const hashedPassword = await bcrypt_1.default.hash(password, 10);
     // Cria o novo usuário e seus produtos associados
-    return await prisma.user.create({
+    const newUser = await prisma.user.create({
         data: {
             name,
             email,
@@ -26,11 +28,16 @@ const createNewUser = async (data) => {
             },
         },
         include: {
-            products: true, // Inclui a lista de produtos na resposta
+            products: true,
         },
     });
+    // Gera um token JWT para o novo usuário
+    const token = jsonwebtoken_1.default.sign({ id: newUser.id, isAdmin: newUser.isAdmin }, authConfig_1.authConfig.secret, {
+        expiresIn: authConfig_1.authConfig.expiresIn,
+    });
+    return { user: newUser, token };
 };
-exports.createNewUser = createNewUser;
+exports.createUser = createUser;
 const promoteUserToAdmin = async (userId) => {
     return await prisma.user.update({
         where: { id: userId },

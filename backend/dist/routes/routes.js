@@ -61,6 +61,40 @@ const router = (0, express_1.Router)();
 router.post('/users/createUser', userController.createUser);
 /**
  * @swagger
+ * /users/login:
+ *   post:
+ *     summary: User login
+ *     description: Authenticates a user and returns a JWT token.
+ *     requestBody:
+ *       description: User credentials for authentication
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john.doe@example.com
+ *               password:
+ *                 type: string
+ *                 example: testPassword*
+ *     responses:
+ *       '200':
+ *         description: Authentication successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+ *       '401':
+ *         description: Authentication failed (invalid credentials)
+ */
+router.post('/users/login', userController.loginUser);
+/**
+ * @swagger
  * /users/{userId}/promote:
  *   post:
  *     summary: Promote a user to admin

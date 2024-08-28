@@ -29,6 +29,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createUser = void 0;
 const userRepository = __importStar(require("../repositories/userRepository"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const authConfig_1 = require("../configs/authConfig");
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createUser = async (data) => {
@@ -36,7 +38,7 @@ const createUser = async (data) => {
     // Criptografa a senha
     const hashedPassword = await bcrypt_1.default.hash(password, 10);
     // Cria o novo usuário e seus produtos associados
-    return await prisma.user.create({
+    const newUser = await prisma.user.create({
         data: {
             name,
             email,
@@ -46,13 +48,18 @@ const createUser = async (data) => {
                     name: product.name,
                     description: product.description,
                     price: product.price
-                })) || [], // Usa uma lista vazia se products não for fornecido
+                })) || [],
             },
         },
         include: {
-            products: true, // Inclui a lista de produtos na resposta
+            products: true,
         },
     });
+    // Gera um token JWT para o novo usuário
+    const token = jsonwebtoken_1.default.sign({ id: newUser.id, isAdmin: newUser.isAdmin }, authConfig_1.authConfig.secret, {
+        expiresIn: authConfig_1.authConfig.expiresIn,
+    });
+    return { user: newUser, token };
 };
 exports.createUser = createUser;
 const promoteUserToAdmin = async (userId) => {
@@ -65,7 +72,7 @@ const promoteUserToAdmin = async (userId) => {
 };
 exports.promoteUserToAdmin = promoteUserToAdmin;
 const deleteUser = async (adminUserId, userId) => {
-    // Verifique se o administrador existe e se é um administrador
+    // Verifique se o usuário existe e se é um administrador
     const adminUser = await prisma.user.findUnique({
         where: { id: adminUserId },
     });

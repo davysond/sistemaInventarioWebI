@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { authConfig } from '../configs/authConfig';
 
 const prisma = new PrismaClient();
 
-export const createNewUser = async (data: {
+export const createUser = async (data: {
   name: string;
   email: string;
   password: string;
@@ -19,7 +21,7 @@ export const createNewUser = async (data: {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   // Cria o novo usuário e seus produtos associados
-  return await prisma.user.create({
+  const newUser = await prisma.user.create({
     data: {
       name,
       email,
@@ -29,14 +31,21 @@ export const createNewUser = async (data: {
           name: product.name,
           description: product.description,
           price: product.price
-        })) || [], 
+        })) || [],
       },
     },
     include: {
-      products: true, // Inclui a lista de produtos na resposta
+      products: true,
     },
   });
-}
+
+  // Gera um token JWT para o novo usuário
+  const token = jwt.sign({ id: newUser.id, isAdmin: newUser.isAdmin }, authConfig.secret, {
+    expiresIn: authConfig.expiresIn,
+  });
+
+  return { user: newUser, token };
+};
 
 export const promoteUserToAdmin = async (userId: number) => {
   return await prisma.user.update({

@@ -23,8 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.createUser = void 0;
+exports.getUserById = exports.getAllUsers = exports.deleteUser = exports.promoteUserToAdmin = exports.loginUser = exports.createUser = void 0;
 const userService = __importStar(require("../services/userService"));
+const authService = __importStar(require("../services/authService"));
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const createUser = async (req, res) => {
@@ -51,6 +52,17 @@ const createUser = async (req, res) => {
     }
 };
 exports.createUser = createUser;
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const result = await authService.loginUser(email, password);
+        return res.status(200).json(result);
+    }
+    catch (error) {
+        return res.status(400).json({ message: "Error login." });
+    }
+};
+exports.loginUser = loginUser;
 /**
    * Promove um usuário para administrador.
    * @param req - A requisição HTTP.

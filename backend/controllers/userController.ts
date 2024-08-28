@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import * as userService from '../services/userService';
+import * as authService from '../services/authService';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -28,6 +29,16 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   } catch (error) {
     console.error('Error creating user:', error);  // Log para depuração
     res.status(500).json({ error: 'Error creating user' });
+  }
+};
+
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    const result = await authService.loginUser(email, password);
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(400).json({ message: "Error login." });
   }
 };
 
