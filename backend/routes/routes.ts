@@ -4,6 +4,8 @@ import * as productController from '../controllers/productController';
 import * as orderController from '../controllers/orderController';
 import * as orderItemController from '../controllers/orderItemController';
 import * as categoryController from '../controllers/categoryController';
+import { authMiddleware } from '../middleware/authMiddleware';
+import { adminMiddleware } from '../middleware/adminMiddleware'; 
 
 const router = Router();
 
