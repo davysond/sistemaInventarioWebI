@@ -8,13 +8,11 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
     try {
       const { userId, paymentMethod, paymentStatus, orderItems } = req.body;
   
-      // Validação básica dos dados
       if (!userId || !orderItems) {
         res.status(400).json({ error: 'User ID and order items are required' });
         return;
       }
   
-      // Chama o serviço para criar o pedido
       const order = await orderService.createOrder({
         userId,
         paymentMethod,
@@ -22,10 +20,9 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         orderItems,
       });
   
-      // Responde com o pedido criado
       res.status(201).json(order);
     } catch (error) {
-      console.error('Error creating order:', error);  // Log para depuração
+      console.error('Error creating order:', error);  
       res.status(500).json({ error: 'Error creating order' });
     }
   };

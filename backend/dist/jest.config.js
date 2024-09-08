@@ -4,6 +4,6 @@ const config = {
     preset: 'ts-jest',
     testEnvironment: 'node',
     rootDir: '.',
-    testMatch: ['**/tests/**/*.test.ts'], // Ajuste para a localização dos testes
+    testMatch: ['**/tests/**/*.test.ts'],
 };
 exports.default = config;

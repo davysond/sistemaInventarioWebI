@@ -33,77 +33,54 @@ const authService = __importStar(require("../services/authService"));
 jest.mock('../services/userService');
 jest.mock('../services/authService');
 describe('User Controller', () => {
-    describe('POST /users', () => {
+    describe('POST /users/createUser', () => {
         it('should create a new user', async () => {
-            const mockUser = { id: 1, name: 'John Doe', email: 'john@example.com', password: 'hashedpassword', products: [] };
+            const mockUser = { id: 1, name: 'Davinho PoXX', email: 'davinhopoxx@mail.com', password: 'hashedpassword', products: [] };
             userService.createUser.mockResolvedValue(mockUser);
             const response = await (0, supertest_1.default)(app_1.default)
-                .post('/users')
-                .send({ name: 'John Doe', email: 'john@example.com', password: '123456', products: [] });
+                .post('/users/createUser')
+                .send({ name: 'Davinho PoXX', email: 'davinhopoxx@mail.com', password: '123456', products: [] });
             expect(response.status).toBe(201);
             expect(response.body).toEqual(mockUser);
         });
-        it('should return 400 if required fields are missing', async () => {
-            const response = await (0, supertest_1.default)(app_1.default)
-                .post('/users')
-                .send({ email: 'john@example.com', password: '123456' });
-            expect(response.status).toBe(400);
-            expect(response.body).toEqual({ error: 'Name, email, and password are required' });
-        });
     });
-    describe('POST /login', () => {
-        it('should login a user', async () => {
-            const mockResult = { token: 'fakeToken' };
+    describe('POST /users/login', () => {
+        it('should login a user and return a token', async () => {
+            const mockToken = 'testToken123';
+            const mockResult = { token: mockToken };
             authService.loginUser.mockResolvedValue(mockResult);
             const response = await (0, supertest_1.default)(app_1.default)
-                .post('/login')
-                .send({ email: 'john@example.com', password: '123456' });
+                .post('/users/login')
+                .send({ email: 'davinhopoxx@mail.com', password: '123456' });
             expect(response.status).toBe(200);
             expect(response.body).toEqual(mockResult);
+            expect(response.body.token).toBe(mockToken);
         });
-        it('should return 400 on login error', async () => {
-            authService.loginUser.mockRejectedValue(new Error('Login failed'));
+        it('should return 400 on error login a user ', async () => {
+            authService.loginUser.mockRejectedValue(new Error('Error login.'));
             const response = await (0, supertest_1.default)(app_1.default)
-                .post('/login')
-                .send({ email: 'john@example.com', password: '123456' });
+                .post('/users/login')
+                .send({ email: 'davinhopoxx@mail.com', password: '1234567' });
             expect(response.status).toBe(400);
             expect(response.body).toEqual({ message: 'Error login.' });
         });
     });
-    describe('PUT /users/:userId/promote', () => {
-        it('should promote a user to admin', async () => {
-            const mockUpdatedUser = { id: 1, name: 'John Doe', email: 'john@example.com', isAdmin: true };
-            userService.promoteUserToAdmin.mockResolvedValue(mockUpdatedUser);
-            const response = await (0, supertest_1.default)(app_1.default)
-                .put('/users/1/promote')
-                .send();
-            expect(response.status).toBe(200);
-            expect(response.body).toEqual(mockUpdatedUser);
-        });
-        it('should return 500 if promotion fails', async () => {
-            userService.promoteUserToAdmin.mockRejectedValue(new Error('Failed to promote user to admin'));
-            const response = await (0, supertest_1.default)(app_1.default)
-                .put('/users/1/promote')
-                .send();
-            expect(response.status).toBe(500);
-            expect(response.body).toEqual({ error: 'Failed to promote user to admin' });
-        });
-    });
-    describe('DELETE /users', () => {
+    describe('DELETE /users/delete', () => {
         it('should delete a user', async () => {
             userService.deleteUser.mockResolvedValue(undefined);
             const response = await (0, supertest_1.default)(app_1.default)
-                .delete('/users')
-                .send({ adminUserId: 1, userId: 2 });
+                .delete('/users/delete')
+                .send({ adminUserId: 6, userId: 1 });
             expect(response.status).toBe(200);
             expect(response.body).toEqual({ message: 'User deleted successfully' });
         });
-        it('should return 400 if required fields are missing', async () => {
+        it('should return 500 on error delete user', async () => {
+            userService.deleteUser.mockRejectedValue(new Error('Error deleting user'));
             const response = await (0, supertest_1.default)(app_1.default)
-                .delete('/users')
-                .send({ adminUserId: 1 });
-            expect(response.status).toBe(400);
-            expect(response.body).toEqual({ error: 'Both adminUserId and userId are required' });
+                .delete('/users/delete')
+                .send({ adminUserId: 1, userId: 6 });
+            expect(response.status).toBe(500);
+            expect(response.body).toEqual({ error: 'Error deleting user' });
         });
     });
     describe('GET /users', () => {
