@@ -2,18 +2,31 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 
-// Função para configurar o Swagger
 export const setupSwagger = (app: Express) => {
   const options = {
     definition: {
-      openapi: "3.0.0", 
+      openapi: "3.0.0",
       info: {
         title: "Sistema de Inventário - Web I",
-        version: "0.1"
+        version: "0.1",
       },
       servers: [
         {
-          url: "http://localhost:3000",
+          url: "http://localhost:3001",
+        },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: 'http',
+            scheme: 'bearer',
+            bearerFormat: 'JWT', 
+          },
+        },
+      },
+      security: [
+        {
+          bearerAuth: [],
         },
       ],
     },

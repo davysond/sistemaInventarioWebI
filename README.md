@@ -34,11 +34,11 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
    npm start
    ```
 
-2. A API estará disponível em `http://localhost:3000`.
+2. A API estará disponível em `http://localhost:3001`.
 
 ## Swagger
 
-URL definida para especificação da documentação através do Swagger em `http://localhost:3000/api-sistemaInventarioWebI/`
+URL definida para especificação da documentação através do Swagger em `http://localhost:3001/api-sistemaInventarioWebI/`
 
 ## Rotas da API
 

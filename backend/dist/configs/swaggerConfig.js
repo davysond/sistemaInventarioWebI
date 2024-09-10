@@ -6,18 +6,31 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.setupSwagger = void 0;
 const swagger_jsdoc_1 = __importDefault(require("swagger-jsdoc"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-// Função para configurar o Swagger
 const setupSwagger = (app) => {
     const options = {
         definition: {
             openapi: "3.0.0",
             info: {
                 title: "Sistema de Inventário - Web I",
-                version: "0.1"
+                version: "0.1",
             },
             servers: [
                 {
-                    url: "http://localhost:3000",
+                    url: "http://localhost:3001",
+                },
+            ],
+            components: {
+                securitySchemes: {
+                    bearerAuth: {
+                        type: 'http',
+                        scheme: 'bearer',
+                        bearerFormat: 'JWT',
+                    },
+                },
+            },
+            security: [
+                {
+                    bearerAuth: [],
                 },
             ],
         },

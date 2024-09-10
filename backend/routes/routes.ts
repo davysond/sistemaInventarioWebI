@@ -98,7 +98,7 @@ router.post('/users/login', userController.loginUser);
  *       '500':
  *         description: Internal server error
  */
-router.post('/users/:userId/promote', userController.promoteUserToAdmin);
+router.post('/users/:userId/promote', authMiddleware, adminMiddleware, userController.promoteUserToAdmin);
 
 /**
  * @swagger
@@ -129,7 +129,7 @@ router.post('/users/:userId/promote', userController.promoteUserToAdmin);
  *       '500':
  *         description: Internal server error
  */
-router.delete('/users/delete', userController.deleteUser);
+router.delete('/users/delete', authMiddleware, adminMiddleware, userController.deleteUser);
 
 /**
  * @swagger
@@ -157,7 +157,7 @@ router.delete('/users/delete', userController.deleteUser);
  *                     type: string
  *                     example: john.doe@example.com
  */
-router.get('/users', userController.getAllUsers);
+router.get('/users', authMiddleware, adminMiddleware, userController.getAllUsers);
 
 /**
  * @swagger
@@ -191,7 +191,7 @@ router.get('/users', userController.getAllUsers);
  *       '404':
  *         description: User not found
  */
-router.get('/users/:id', userController.getUserById);
+router.get('/users/:id', authMiddleware, adminMiddleware, userController.getUserById);
 
 // Rotas de produtos
 /**
@@ -258,7 +258,7 @@ router.get('/products', productController.getAllProducts);
  *       '404':
  *         description: User not found
  */
-router.get('/productsByUserId/:userId', productController.getProductsByUserId);
+router.get('/productsByUserId/:userId', authMiddleware, adminMiddleware, productController.getProductsByUserId);
 
 /**
  * @swagger
@@ -289,7 +289,7 @@ router.get('/productsByUserId/:userId', productController.getProductsByUserId);
  *       '400':
  *         description: Bad request
  */
-router.post('/products/createProduct', productController.createProduct);
+router.post('/products/createProduct', authMiddleware, productController.createProduct);
 
 /**
  * @swagger
@@ -325,7 +325,7 @@ router.post('/products/createProduct', productController.createProduct);
  *       '404':
  *         description: Product not found
  */
-router.put('/products/:id', productController.updateProduct);
+router.put('/products/:id', authMiddleware, adminMiddleware, productController.updateProduct);
 
 /**
  * @swagger
@@ -345,7 +345,7 @@ router.put('/products/:id', productController.updateProduct);
  *       '404':
  *         description: Product not found
  */
-router.delete('/products/:id', productController.deleteProduct);
+router.delete('/products/:id', authMiddleware, productController.deleteProduct);
 
 /**
  * @swagger
@@ -437,7 +437,7 @@ router.delete('/products/:id', productController.deleteProduct);
  *       '500':
  *         description: Internal server error
  */
-router.post('/orders', orderController.createOrder);
+router.post('/orders', authMiddleware, orderController.createOrder);
 
 /**
  * @swagger
@@ -463,7 +463,7 @@ router.post('/orders', orderController.createOrder);
  *       '500':
  *         description: Internal server error
  */
-router.post('/orders/:orderId/payment', orderController.finishPayment);
+router.post('/orders/:orderId/payment', authMiddleware, orderController.finishPayment);
 
 /**
  * @swagger
@@ -502,7 +502,7 @@ router.post('/orders/:orderId/payment', orderController.finishPayment);
  *       '500':
  *         description: Internal server error
  */
-router.post('/order-items/:orderId', orderItemController.addOrderItem);
+router.post('/order-items/:orderId', authMiddleware, orderItemController.addOrderItem);
 
 /**
  * @swagger
@@ -516,7 +516,7 @@ router.post('/order-items/:orderId', orderItemController.addOrderItem);
  *       '500':
  *         description: Internal server error
  */
-router.get('/orders', orderController.getAllOrders);
+router.get('/orders', authMiddleware, orderController.getAllOrders);
 
 /**
  * @swagger
@@ -539,7 +539,7 @@ router.get('/orders', orderController.getAllOrders);
  *       '500':
  *         description: Internal server error
  */
-router.get('/orders/:id', orderController.getOrderById);
+router.get('/orders/:id', authMiddleware, adminMiddleware, orderController.getOrderById);
 
 /**
  * @swagger
@@ -567,7 +567,7 @@ router.get('/orders/:id', orderController.getOrderById);
  *       '500':
  *         description: Internal server error
  */
-router.delete('/orders', orderController.deleteOrder);
+router.delete('/orders', authMiddleware, orderController.deleteOrder);
 
 /**
  * @swagger
@@ -595,7 +595,7 @@ router.delete('/orders', orderController.deleteOrder);
  *       '500':
  *         description: Internal server error
  */
-router.delete('/order-items', orderItemController.deleteOrderItem);
+router.delete('/order-items', authMiddleware, orderItemController.deleteOrderItem);
 
 /**
  * @swagger
@@ -624,7 +624,7 @@ router.delete('/order-items', orderItemController.deleteOrderItem);
  *       '500':
  *         description: Internal server error
  */
-router.post('/category', categoryController.createCategory);
+router.post('/category', authMiddleware, categoryController.createCategory);
 
 /**
  * @swagger

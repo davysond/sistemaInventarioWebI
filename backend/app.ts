@@ -5,12 +5,15 @@ import { setupSwagger } from './configs/swaggerConfig';
 
 const app = express();
 
+app.use(cors({
+  origin: 'http://localhost:3000', // Permite requisições apenas do front-end em localhost:3000
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+}));
+
 app.use(express.json());
 
-// Configuração do Swagger
 setupSwagger(app);
 
 app.use('/', routes);
-app.use(cors()); 
 
 export default app;

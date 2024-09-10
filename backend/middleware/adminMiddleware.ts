@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
-export const adminMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (req.user?.isAdmin) {
+export const adminMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user || !req.user.isAdmin) {
+        return res.status(403).json({ message: 'Access denied' });
+    }
+
     return next();
-  }
-  return res.status(403).json({ message: 'Access denied' });
 };
