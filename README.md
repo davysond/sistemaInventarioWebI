@@ -7,6 +7,7 @@ Repositório destinado ao projeto de um Sistema Interativo de Inventário, desen
 - Express
 - ReactJS
 - PostgreSQL
+- Jest
 
 ## Instalação
 
